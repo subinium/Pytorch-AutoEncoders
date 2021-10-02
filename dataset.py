@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 def mnist_dataloader(dataset_path, batch_size):
     transform = transforms.Compose([
             transforms.ToTensor(),
+            
     ])
 
     train_dataset = MNIST(dataset_path, transform=transform, train=True, download=True)
