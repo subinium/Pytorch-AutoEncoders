@@ -1,37 +1,46 @@
+# utils
+import argparse
+# torch modules
 import torch
 import torch.nn as nn
 from torch.optim import Adam
+from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import save_image, make_grid
-from model import VanillaVAE
+# custom modules
+from model import *
 from dataset import *
-import argparse
-
+from logger import *
 
 
 def train(args, device):
     model = VanillaVAE(args).to(device)
     optimizer = Adam(model.parameters(), lr=args['lr'])
-    train_loader, valid_loader = mnist_dataloader('./dataset', 32)
+    logger = prepare_logger()
+    
+    train_loader, valid_loader = mnist_dataloader('./dataset', args['batch_size'])
     print('Number of Parameters: ', sum(param.numel() for param in model.parameters()))
+    
+    
     model.train()
     iteration = 0
-    for epoch in range(100):
-        for idx, (image, label) in enumerate(train_loader):
+    for epoch in range(args['epochs']):
+        for idx, (x, label) in enumerate(train_loader):
             iteration += 1
-            image = image.to(device)
-            image = image.view(32, -1)
-            x_hat, loss = model(image)
+            x = x.view(32, -1).to(device)
+            x_hat, loss = model(x)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-
-            if iteration % 100 == 0:
-                print(iteration, loss.item())
             
+            if iteration % 100 == 0:
+                logger.add_scalar('Loss/train', loss, iteration)
+                logger.add_images('Image/train', torch.stack([x.cpu(), x_hat.cpu()], dim=0).view(-1, 1, 28, 28), iteration)
+            
+                
             
 
 if __name__ == '__main__':
-    args = {"input_dim":784, "hidden_dim":100, "latent_dim":50, "output_dim":784, "lr":0.0001}
-    print(torch.cuda.is_available())
+    args = {"input_dim":784, "hidden_dim":100, "latent_dim":50, "output_dim":784, "lr":0.0001, 'batch_size':32, 'epochs':10}
+    print('CUDA AVAILABLE :', torch.cuda.is_available())
     device = 'cuda'
     train(args, device)
