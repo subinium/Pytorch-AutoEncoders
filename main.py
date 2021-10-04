@@ -1,5 +1,6 @@
 # utils
 import argparse
+import json
 # torch modules
 import torch
 import torch.nn as nn
@@ -31,7 +32,6 @@ def train(args, device):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            
             if iteration % 100 == 0:
                 logger.add_scalar('Loss/train', loss, iteration)
                 logger.add_images('Image/train', torch.stack([x.cpu(), x_hat.cpu()], dim=0).view(-1, 1, 28, 28), iteration)
@@ -40,7 +40,8 @@ def train(args, device):
             
 
 if __name__ == '__main__':
-    args = {"input_dim":784, "hidden_dim":100, "latent_dim":50, "output_dim":784, "lr":0.0001, 'batch_size':32, 'epochs':10}
+    with open('config.json', 'r') as f:
+        args = json.load(f)
     print('CUDA AVAILABLE :', torch.cuda.is_available())
     device = 'cuda'
     train(args, device)
