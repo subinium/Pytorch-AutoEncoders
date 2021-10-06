@@ -1,19 +1,27 @@
 # utils
 import argparse
+import json
 # torch modules
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.optim import Adam
 from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import save_image, make_grid
 # custom modules
-from model import *
+from models.VanillaVAE import VanillaVAE
+from models.CVAE import CVAE
 from dataset import *
 from logger import *
 
 
 def train(args, device):
-    model = VanillaVAE(args).to(device)
+    model_name = args['model']
+    print(model_name)
+    if model_name == 'VAE':
+        model = VanillaVAE(args).to(device)
+    elif model_name == 'CVAE':
+        model = CVAE(args).to(device)
     optimizer = Adam(model.parameters(), lr=args['lr'])
     logger = prepare_logger()
     
@@ -27,20 +35,33 @@ def train(args, device):
         for idx, (x, label) in enumerate(train_loader):
             iteration += 1
             x = x.view(32, -1).to(device)
-            x_hat, loss = model(x)
+            if model_name == 'VAE':
+                x_hat, loss = model(x)
+            if model_name == 'CVAE':
+                label_ohe = F.one_hot(label, num_classes=10).to(device)
+                x_hat, loss = model(x, label_ohe)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            
             if iteration % 100 == 0:
                 logger.add_scalar('Loss/train', loss, iteration)
                 logger.add_images('Image/train', torch.stack([x.cpu(), x_hat.cpu()], dim=0).view(-1, 1, 28, 28), iteration)
             
                 
-            
 
 if __name__ == '__main__':
-    args = {"input_dim":784, "hidden_dim":100, "latent_dim":50, "output_dim":784, "lr":0.0001, 'batch_size':32, 'epochs':10}
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config',  '-c',
+                    dest="filename",
+                    metavar='FILE',
+                    help =  'path to the config file',
+                    default='configs/VanillaVAE.json')
+
+    args = parser.parse_args()
+
+
+    with open(args.filename, 'r') as f:
+        args = json.load(f)
     print('CUDA AVAILABLE :', torch.cuda.is_available())
     device = 'cuda'
     train(args, device)
