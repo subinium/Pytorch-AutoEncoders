@@ -1,6 +1,7 @@
 import torch 
 import torch.nn as nn
 import torch.nn.functional as F
+from torchsummary import summary
 
 class Encoder(nn.Module):
     def __init__(self, args):
@@ -9,10 +10,11 @@ class Encoder(nn.Module):
         hidden_dim = args['hidden_dim']
         latent_dim = args['latent_dim']
         self.model = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.LeakyReLU(0.2),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.2)
+            nn.Conv2d(1, 32, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.Flatten()
         )
         self.fc_mean = nn.Linear(hidden_dim, latent_dim)
         self.fc_var = nn.Linear(hidden_dim, latent_dim)
@@ -31,11 +33,14 @@ class Decoder(nn.Module):
         latent_dim = args['latent_dim']
         output_dim = args['output_dim']
         self.model = nn.Sequential(
-            nn.Linear(latent_dim, hidden_dim),
-            nn.LeakyReLU(0.2),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.2),
-            nn.Linear(hidden_dim, output_dim),
+            nn.Linear(latent_dim, 32*7*7),
+            nn.Unflatten(1, (32, 7, 7)),
+            nn.ReLU(),
+            nn.ConvTranspose2d(32, 64, kernel_size=4, stride=2, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(32, 1, kernel_size=3, stride=1 , padding=1),
             nn.Sigmoid()
         )
     
@@ -66,12 +71,11 @@ class VanillaVAE(nn.Module):
         return x_hat, loss
 
 
-
 if __name__ == '__main__':
-    args = {"input_dim":784, "hidden_dim":100, "latent_dim":50, "output_dim":784}
+    args = {"input_dim":784, "hidden_dim":512, "latent_dim":100, "output_dim":784, "hidden_dim":2304}
     encoder = Encoder(args)
-    input = torch.rand(32, 784)
-    vae = VanillaVAE(args)
-    x_hat, loss = vae(input)
-    print(x_hat.shape, loss)
+    input = torch.rand(32, 1, 28, 28)
+    VAE = VanillaVAE(args)
+    x, _ = VAE(input)
+    print(x.shape)
     

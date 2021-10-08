@@ -3,15 +3,12 @@
 </h1>
 
 <p align="center">
-      <a href="https://www.python.org/">
-        <img src="https://img.shields.io/badge/Python-3.8-4B8BBE.svg" /></a>
-       <a href= "https://pytorch.org/">
-        <img src="https://img.shields.io/badge/PyTorch-1.7-EE4C2C.svg" /></a>
-       <a href= "https://github.com/subinium/Pytorch-AutoEncoders/blob/main/LICENSE">
-        <img src="https://img.shields.io/badge/license-MIT-yellow.svg" />
-        </a>
-        
-
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/Python-3.8-4B8BBE.svg" /></a>
+  <a href= "https://pytorch.org/">
+    <img src="https://img.shields.io/badge/PyTorch-1.7-EE4C2C.svg" /></a>
+  <a href= "https://github.com/subinium/Pytorch-AutoEncoders/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-yellow.svg" /></a>
 </p>
 
 Implementing a Variational Autoencoder (VAE) Series in Pytorch.
@@ -22,7 +19,10 @@ Implementing a Variational Autoencoder (VAE) Series in Pytorch.
 
 - [x] VAE
 - [x] CVAE
+- [ ] DAE
 - [ ] Beta-VAE
+- [ ] InfoVAE
+- [ ] JointVAE
 - [ ] VQ-VAE
 - [ ] VQ-VAE-2
 

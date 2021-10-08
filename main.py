@@ -34,7 +34,9 @@ def train(args, device):
     for epoch in range(args['epochs']):
         for idx, (x, label) in enumerate(train_loader):
             iteration += 1
-            x = x.view(32, -1).to(device)
+            
+            x = x.to(device)
+
             if model_name == 'VAE':
                 x_hat, loss = model(x)
             if model_name == 'CVAE':
