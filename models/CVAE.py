@@ -10,16 +10,19 @@ class Encoder(nn.Module):
         hidden_dim = args['hidden_dim']
         latent_dim = args['latent_dim']
         self.model = nn.Sequential(
-            nn.Linear(input_dim+condition_dim, hidden_dim),
-            nn.LeakyReLU(0.2),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.2)
+            nn.Conv2d(1+condition_dim, 32, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.Flatten()
         )
         self.fc_mean = nn.Linear(hidden_dim, latent_dim)
         self.fc_var = nn.Linear(hidden_dim, latent_dim)
     
     def forward(self, x, c):
-        h = self.model(torch.cat([x, c], 1))
+        c = c.unsqueeze(2).unsqueeze(3)
+        x = torch.cat((x, c.expand(32, 10, 28, 28)), 1)
+        h = self.model(x)
         mu = self.fc_mean(h)
         logvar = self.fc_var(h)
         return mu, logvar
@@ -33,16 +36,20 @@ class Decoder(nn.Module):
         latent_dim = args['latent_dim']
         output_dim = args['output_dim']
         self.model = nn.Sequential(
-            nn.Linear(latent_dim+condition_dim, hidden_dim),
-            nn.LeakyReLU(0.2),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.2),
-            nn.Linear(hidden_dim, output_dim),
+            nn.Linear(latent_dim+condition_dim, 32*7*7),
+            nn.Unflatten(1, (32, 7, 7)),
+            nn.ReLU(),
+            nn.ConvTranspose2d(32, 64, kernel_size=4, stride=2, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(32, 1, kernel_size=3, stride=1 , padding=1),
             nn.Sigmoid()
         )
     
     def forward(self, z, c):
-        return self.model(torch.cat([z, c], 1))
+        x = torch.cat((z, c), 1)
+        return self.model(x)
 
 class CVAE(nn.Module):
     def __init__(self, args):

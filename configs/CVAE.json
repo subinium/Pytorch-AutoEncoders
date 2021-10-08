@@ -1,8 +1,8 @@
 {
   "model": "CVAE",
   "input_dim": 784,
-  "hidden_dim": 100,
-  "latent_dim": 50,
+  "hidden_dim": 2304,
+  "latent_dim": 100,
   "output_dim": 784,
   "lr": 0.0001,
   "batch_size": 32,
