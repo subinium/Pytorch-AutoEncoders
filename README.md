@@ -17,14 +17,17 @@ Implementing a Variational Autoencoder (VAE) Series in Pytorch.
 
 ## Model List
 
-- [x] VAE
-- [x] CVAE
-- [ ] DAE
-- [ ] Beta-VAE
-- [ ] InfoVAE
-- [ ] JointVAE
-- [ ] VQ-VAE
-- [ ] VQ-VAE-2
+|check|model|paper|conference|
+|-|-|-|-|
+|O|**VAE**|[Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)|ICLR 2014|
+|O|**CVAE**|[Learning Structured Output Representation using Deep Conditional Generative Models](https://scholar.google.com/scholar_url?url=http://papers.nips.cc/paper/5775-learning-structured-outputrepresentation-using-deep-conditional-generative-models.pdf&hl=ko&sa=T&oi=gsb-gga&ct=res&cd=0&d=12314198516266869942&ei=dUBhYbqGLKXGywS7_I6ABQ&scisig=AAGBfm09qbvL0Wl0zrhnRZMZS7H26bQv4Q)|NeurIPS 2015|
+||**AAE**|[Adversarial Autoencoder](https://arxiv.org/abs/1511.05644)|ICLR 2016|
+||**Beta-VAE**|[β-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework](https://openreview.net/forum?id=Sy2fzU9gl)|ICLR 2017|
+||**VQ-VAE**|[Neural Discrete Representation Learning](https://arxiv.org/abs/1711.00937)|NeurIPS 2017|
+
+## Result
+
+> TBD
 
 ## Contact
 
