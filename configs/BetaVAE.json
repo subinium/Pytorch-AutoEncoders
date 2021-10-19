@@ -1,0 +1,11 @@
+{
+  "model": "BetaVAE",
+  "input_dim": 3,
+  "hidden_dim": 256,
+  "latent_dim": 32,
+  "output_dim": 3,
+  "lr": 0.0001,
+  "batch_size": 32,
+  "epochs": 10,
+  "beta": 10.0
+}
