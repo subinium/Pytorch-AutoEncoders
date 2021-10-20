@@ -1,0 +1,10 @@
+{
+  "model": "AAE",
+  "input_dim": 784,
+  "hidden_dim": 128,
+  "latent_dim": 32,
+  "output_dim": 784,
+  "lr": 0.0001,
+  "batch_size": 32,
+  "epochs": 10
+}
