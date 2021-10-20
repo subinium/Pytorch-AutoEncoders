@@ -1,7 +1,6 @@
 import torch 
 import torch.nn as nn
 import torch.nn.functional as F
-from torchsummary import summary
 
 class Encoder(nn.Module):
     def __init__(self, args):
@@ -13,6 +12,8 @@ class Encoder(nn.Module):
             nn.Conv2d(1, 32, kernel_size=3, stride=2),
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.Conv2d(64, 32, kernel_size=3, stride=2),
             nn.ReLU(),
             nn.Flatten()
         )
@@ -72,7 +73,7 @@ class VanillaVAE(nn.Module):
 
 
 if __name__ == '__main__':
-    args = {"input_dim":784, "hidden_dim":512, "latent_dim":100, "output_dim":784, "hidden_dim":2304}
+    args = {"input_dim":784, "latent_dim":100, "output_dim":784, "hidden_dim":128}
     encoder = Encoder(args)
     input = torch.rand(32, 1, 28, 28)
     VAE = VanillaVAE(args)

@@ -14,6 +14,8 @@ class Encoder(nn.Module):
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=3, stride=2),
             nn.ReLU(),
+            nn.Conv2d(64, 32, kernel_size=3, stride=2),
+            nn.ReLU(),
             nn.Flatten()
         )
         self.fc_mean = nn.Linear(hidden_dim, latent_dim)
